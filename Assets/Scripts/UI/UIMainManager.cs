@@ -154,12 +154,7 @@ public class UIMainManager : MonoBehaviour
 
         if (dualBoardGameManager != null)
         {
-            Debug.Log("🤖 Triggering Auto Win mode...");
             dualBoardGameManager.TriggerAutoWin();
-        }
-        else
-        {
-            Debug.LogError("❌ DualBoardGameManager not found after game start!");
         }
     }
 
@@ -173,12 +168,7 @@ public class UIMainManager : MonoBehaviour
 
         if (dualBoardGameManager != null)
         {
-            Debug.Log("💀 Triggering Auto Lose mode...");
             dualBoardGameManager.TriggerAutoLose();
-        }
-        else
-        {
-            Debug.LogError("❌ DualBoardGameManager not found after game start!");
         }
     }
 

@@ -11,7 +11,8 @@ Develop Dual Board Gameplay System for Match-3 within 2 playing mode: DUAL_BOARD
 
 ======================================================
 2. Core Dual Board System(1.5 hours)
-- Build InventoryBoardController (9x9 board)
+- Build InventoryBoardController (9x9 board) with all types of fish.
+- Each item has a total quantity that is divisible by 3.
 - Build PlayingBoardController (1x5 board)
 - Implement DualBoardGameManager 
 - Fix position bug (localPosition vs. position)

@@ -54,7 +54,7 @@ public class GameManager : MonoBehaviour
 
         m_gameSettings = Resources.Load<GameSettings>(Constants.GAME_SETTINGS_PATH);
 
-        m_uiMenu = FindObjectOfType<UIMainManager>();
+        m_uiMenu = FindFirstObjectByType<UIMainManager>();
         m_uiMenu.Setup(this);
     }
 
@@ -130,9 +130,11 @@ public class GameManager : MonoBehaviour
         GameObject attackTimeObj = new GameObject("AttackTimeGameManager");
         m_dualBoardManager = attackTimeObj.AddComponent<DualBoardGameManager>();
 
-        // Gọi StartGame với Attack Time mode
+        // 🔧 FIX: Set Attack Time mode TRƯỚC khi gọi StartGame
+        m_dualBoardManager.SetAttackTimeMode(true);
+
+        // Gọi StartGame (SetupBoards sẽ dùng IsAttackTimeMode = true)
         m_dualBoardManager.StartGame(this, m_gameSettings);
-        m_dualBoardManager.SetAttackTimeMode(true); // Set Attack Time mode
 
         // Tạo Level Condition với timer
         m_levelCondition = this.gameObject.AddComponent<LevelAttackTime>();

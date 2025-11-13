@@ -69,24 +69,19 @@ public class DualBoardGameManager : MonoBehaviour
     // Khi item được select (highlight)
     private void OnItemSelectedFromInventory(Item item, Cell sourceCell)
     {
-        Debug.Log($"🔵 Item selected: {item}");
         // Có thể thêm visual feedback ở đây (ví dụ: highlight slot trống tiếp theo trong playing board)
     }
 
     // Khi item được confirm chuyển sang playing board
     private void OnItemConfirmedFromInventory(Item item, Cell sourceCell)
     {
-        Debug.Log($"✅ Item confirmed! Transferring to playing board...");
-
         // Check playing board có chỗ trống không
         if (m_playingBoard.HasEmptySlots())
         {
             m_playingBoard.ReceiveItemFromInventory(item);
-            Debug.Log($"✅ Item transferred successfully!");
         }
         else
         {
-            Debug.Log("⚠️ Playing board is full! Cannot transfer item.");
             // Có thể return item về inventory hoặc hiển thị thông báo
         }
     }
@@ -94,19 +89,16 @@ public class DualBoardGameManager : MonoBehaviour
     // Khi Inventory Board rỗng -> WIN!
     private void OnInventoryEmpty()
     {
-        Debug.Log("🎉 VICTORY! All items cleared from inventory!");
-        Debug.Log("✅ Triggering WIN condition -> Game WIN state");
-
         // Gọi GameWin thay vì GameOver
         if (m_gameManager != null)
         {
             m_gameManager.GameWin();
         }
-    }    // Khi Playing Board đầy -> Game Over (chỉ cho non-Attack-Time mode)
+    }
+
+    // Khi Playing Board đầy -> Game Over (chỉ cho non-Attack-Time mode)
     private void OnPlayingBoardFull()
     {
-        Debug.Log("🔴 GAME OVER! Playing board is full!");
-
         // Gọi GameOver từ GameManager
         if (m_gameManager != null)
         {
@@ -117,8 +109,6 @@ public class DualBoardGameManager : MonoBehaviour
     // Khi click vào item trong Playing Board (Attack Time mode) -> Return về Inventory
     private void OnPlayingBoardItemClicked(Item item, Cell sourceCell)
     {
-        Debug.Log($"🔙 Returning item {item} from Playing Board to Inventory");
-
         // Return item về inventory
         if (m_inventoryBoard != null)
         {
@@ -132,10 +122,6 @@ public class DualBoardGameManager : MonoBehaviour
         if (m_playingBoard.HasEmptySlots())
         {
             m_playingBoard.ReceiveItemFromInventory(item, dropPosition);
-        }
-        else
-        {
-            Debug.Log("Playing board is full!");
         }
     }
 

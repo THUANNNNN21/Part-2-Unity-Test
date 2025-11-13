@@ -38,7 +38,6 @@ public class UIPanelGameWin : MonoBehaviour, IMenu
     public void Show()
     {
         this.gameObject.SetActive(true);
-        Debug.Log("🎉 Showing WIN Panel!");
     }
 
 }

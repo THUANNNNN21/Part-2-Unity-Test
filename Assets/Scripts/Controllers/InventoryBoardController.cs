@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
 
 public class InventoryBoardController : MonoBehaviour
 {
@@ -58,8 +59,6 @@ public class InventoryBoardController : MonoBehaviour
 
         // Fill inventory với items (custom fill để đảm bảo mỗi loại chia hết cho 3)
         FillInventoryBalanced();
-
-        Debug.Log("✅ Inventory Board created and filled!");
     }
 
     // Fill inventory với items balanced (mỗi loại chia hết cho 3)
@@ -112,8 +111,6 @@ public class InventoryBoardController : MonoBehaviour
             allCells[i].Assign(item);
             allCells[i].ApplyItemPosition(false);
         }
-
-        Debug.Log("📊 Inventory filled: 6 types with 12 items each, 1 type with 9 items (all divisible by 3)");
     }
 
     // Shuffle list
@@ -191,7 +188,6 @@ public class InventoryBoardController : MonoBehaviour
         // Kiểm tra cell có item không
         if (cell.Item == null)
         {
-            Debug.Log("Clicked empty inventory slot");
             return;
         }
 
@@ -218,8 +214,6 @@ public class InventoryBoardController : MonoBehaviour
 
         // Trigger event cho DualBoardManager xử lý
         OnItemSelectedFromInventory?.Invoke(m_selectedItem, m_selectedCell);
-
-        Debug.Log($"📦 Selected item from inventory: Type={m_selectedItem}. Click again to transfer!");
     }
 
     // Confirm chuyển item sang playing board
@@ -227,8 +221,6 @@ public class InventoryBoardController : MonoBehaviour
     {
         if (m_selectedCell != null && m_selectedItem != null)
         {
-            Debug.Log($"✅ Transferring item to playing board: {m_selectedItem}");
-
             // Trigger event để DualBoardManager xử lý
             OnItemConfirmedFromInventory?.Invoke(m_selectedItem, m_selectedCell);
 
@@ -255,13 +247,11 @@ public class InventoryBoardController : MonoBehaviour
             if (!cell.IsEmpty)
             {
                 // Còn item -> chưa win
-                Debug.Log($"📦 Inventory: {CountItemsInInventory()} items remaining");
                 return;
             }
         }
 
         // Tất cả cells đều empty -> WIN!
-        Debug.Log("🎉 VICTORY! Inventory is completely empty!");
         OnInventoryEmptyEvent?.Invoke();
     }
 
@@ -287,7 +277,6 @@ public class InventoryBoardController : MonoBehaviour
         if (m_isAutoPlaying) return; // Đang auto rồi thì không làm gì
         if (m_isAutoLosing) StopAutoLose(); // Dừng auto lose nếu đang chạy
 
-        Debug.Log("🤖 AUTO WIN Started!");
         m_isAutoPlaying = true;
         m_autoPlayCoroutine = StartCoroutine(AutoPlayCoroutine());
     }
@@ -301,7 +290,6 @@ public class InventoryBoardController : MonoBehaviour
             m_autoPlayCoroutine = null;
         }
         m_isAutoPlaying = false;
-        Debug.Log("🤖 AUTO WIN Stopped!");
     }
 
     // Auto Lose: Tự động chơi để thua (chọn ngẫu nhiên items)
@@ -310,7 +298,6 @@ public class InventoryBoardController : MonoBehaviour
         if (m_isAutoLosing) return; // Đang auto lose rồi
         if (m_isAutoPlaying) StopAutoWin(); // Dừng auto win nếu đang chạy
 
-        Debug.Log("💀 AUTO LOSE Started!");
         m_isAutoLosing = true;
         m_autoLoseCoroutine = StartCoroutine(AutoLoseCoroutine());
     }
@@ -324,7 +311,6 @@ public class InventoryBoardController : MonoBehaviour
             m_autoLoseCoroutine = null;
         }
         m_isAutoLosing = false;
-        Debug.Log("💀 AUTO LOSE Stopped!");
     }
 
     // Coroutine tự động chơi
@@ -346,16 +332,12 @@ public class InventoryBoardController : MonoBehaviour
 
             if (matchingCells != null && matchingCells.Count == 3)
             {
-                Debug.Log($"🤖 AUTO: Found 3 matching items! Transferring...");
-
                 // Transfer 3 items liên tiếp
                 for (int i = 0; i < 3; i++)
                 {
                     Cell cellToTransfer = matchingCells[i];
                     if (cellToTransfer != null && cellToTransfer.Item != null)
                     {
-                        Debug.Log($"🤖 AUTO: Transferring item {i + 1}/3: {cellToTransfer.Item}");
-
                         // Transfer item
                         Item itemToTransfer = cellToTransfer.Item;
                         OnItemConfirmedFromInventory?.Invoke(itemToTransfer, cellToTransfer);
@@ -381,14 +363,12 @@ public class InventoryBoardController : MonoBehaviour
                 // Kiểm tra inventory còn items không
                 if (CountItemsInInventory() == 0)
                 {
-                    Debug.Log("🤖 AUTO: Inventory empty - WIN!");
                     break;
                 }
             }
             else
             {
                 // Không còn 3 items cùng loại nào
-                Debug.Log("🤖 AUTO: No more matching groups found");
                 break;
             }
         }
@@ -412,7 +392,6 @@ public class InventoryBoardController : MonoBehaviour
                 // Check nếu playing board đã đầy -> dừng (đã thua)
                 if (!m_playingBoardRef.HasEmptySlots())
                 {
-                    Debug.Log("💀 AUTO LOSE: Playing board is FULL! Game Over!");
                     break;
                 }
             }
@@ -422,8 +401,6 @@ public class InventoryBoardController : MonoBehaviour
 
             if (randomCell != null && randomCell.Item != null)
             {
-                Debug.Log($"💀 AUTO LOSE: Transferring random item: {randomCell.Item}");
-
                 // Transfer item
                 Item itemToTransfer = randomCell.Item;
                 OnItemConfirmedFromInventory?.Invoke(itemToTransfer, randomCell);
@@ -447,14 +424,12 @@ public class InventoryBoardController : MonoBehaviour
                 // Kiểm tra inventory còn items không
                 if (CountItemsInInventory() == 0)
                 {
-                    Debug.Log("💀 AUTO LOSE: Unexpectedly won! Inventory empty!");
                     break;
                 }
             }
             else
             {
                 // Không còn item nào
-                Debug.Log("💀 AUTO LOSE: No more items to transfer");
                 break;
             }
         }
@@ -522,7 +497,6 @@ public class InventoryBoardController : MonoBehaviour
         }
 
         int targetType = (int)randomItem.ItemType;
-        Debug.Log($"🤖 AUTO: Random item type selected: {targetType}");
 
         // Tìm tất cả items cùng loại
         List<Cell> matchingCells = new List<Cell>();
@@ -545,13 +519,10 @@ public class InventoryBoardController : MonoBehaviour
 
         if (matchingCells.Count >= 3)
         {
-            Debug.Log($"🤖 AUTO: Found {matchingCells.Count} items of type {targetType}");
             return matchingCells.GetRange(0, 3); // Trả về 3 items đầu tiên
         }
         else
         {
-            Debug.Log($"🤖 AUTO: Only found {matchingCells.Count} items of type {targetType}, need 3");
-
             // Thử lại với item type khác
             // Tìm loại item nào có >= 3 items
             Dictionary<int, List<Cell>> itemGroups = new Dictionary<int, List<Cell>>();
@@ -573,7 +544,6 @@ public class InventoryBoardController : MonoBehaviour
             {
                 if (group.Value.Count >= 3)
                 {
-                    Debug.Log($"🤖 AUTO: Found alternative type {group.Key} with {group.Value.Count} items");
                     return group.Value.GetRange(0, 3);
                 }
             }
@@ -607,25 +577,23 @@ public class InventoryBoardController : MonoBehaviour
     // Nhận item từ Playing Board (Attack Time mode - return item về inventory)
     public void ReceiveItemFromPlayingBoard(Item item, Cell playingBoardCell)
     {
-        Debug.Log($"🔙 Receiving item back from Playing Board: {item}");
-
         // Tìm slot trống đầu tiên trong inventory
         Cell emptyCell = FindEmptySlotInInventory();
 
         if (emptyCell != null)
         {
-            // Xóa item khỏi playing board cell
-            playingBoardCell.Free();
-
-            // Assign item vào inventory cell
+            // Assign item vào inventory cell (trước khi Free playing board cell)
             emptyCell.Assign(item);
-            emptyCell.ApplyItemPosition(true); // Animate
 
-            Debug.Log($"✅ Item returned to inventory successfully!");
-        }
-        else
-        {
-            Debug.LogWarning("⚠️ Inventory is full! Cannot return item.");
+            // Animate item bay về inventory
+            if (item.View != null)
+            {
+                item.View.transform.DOMove(emptyCell.transform.position, 0.3f)
+                    .SetEase(Ease.OutQuad);
+            }
+
+            // Xóa item khỏi playing board cell (sau khi assign)
+            playingBoardCell.Free();
         }
     }
 

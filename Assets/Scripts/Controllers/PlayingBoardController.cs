@@ -56,11 +56,24 @@ public class PlayingBoardController : MonoBehaviour
                 // Check cell có thuộc playing board không và có item không
                 if (clickedCell != null && IsPlayingBoardCell(clickedCell) && !clickedCell.IsEmpty)
                 {
-                    Debug.Log($"🔙 Clicked item in Playing Board: {clickedCell.Item}");
+                    // Set busy để prevent concurrent operations
+                    IsBusy = true;
+
+                    // Trigger event để DualBoardGameManager xử lý
                     OnItemClickedInPlayingBoard?.Invoke(clickedCell.Item, clickedCell);
+
+                    // Reset busy sau 0.5s (đủ thời gian cho animation)
+                    StartCoroutine(ResetBusyAfterDelay(0.5f));
                 }
             }
         }
+    }
+
+    // Coroutine để reset IsBusy sau delay
+    private IEnumerator ResetBusyAfterDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        IsBusy = false;
     }
 
     // Check cell có thuộc playing board không
@@ -77,15 +90,15 @@ public class PlayingBoardController : MonoBehaviour
 
         if (targetCell != null)
         {
-            Debug.Log($"📥 Receiving item to slot. Empty slots remaining: {CountEmptySlots()}");
             PlaceItemOnBoard(item, targetCell);
         }
         else
         {
-            Debug.Log("⚠️ Playing board is FULL! No empty slots available.");
-            Debug.Log("🔴 Triggering OnBoardFullEvent -> GAME OVER");
-            // Trigger event: Board đầy -> Game Over
-            OnBoardFullEvent?.Invoke();
+            // 🔧 FIX: Chỉ trigger Game Over nếu KHÔNG phải Attack Time mode
+            if (!m_isAttackTimeMode)
+            {
+                OnBoardFullEvent?.Invoke();
+            }
         }
     }
 
@@ -136,7 +149,6 @@ public class PlayingBoardController : MonoBehaviour
         if (animator != null)
         {
             animator.SetTrigger("Move");
-            Debug.Log($"🚀 Triggered Move animation for {item.View.name}");
         }
 
         // Animate item bay đến vị trí
@@ -147,7 +159,6 @@ public class PlayingBoardController : MonoBehaviour
                 if (animator != null)
                 {
                     animator.SetTrigger("Land");
-                    Debug.Log($"📍 Triggered Land animation for {item.View.name}");
                 }
 
                 CheckAndDespawnMatches();
@@ -198,8 +209,11 @@ public class PlayingBoardController : MonoBehaviour
             // Không có match nào -> check xem board có đầy không
             if (!HasEmptySlots())
             {
-                Debug.Log("⚠️ No matches and board is FULL! Triggering Game Over...");
-                OnBoardFullEvent?.Invoke();
+                // 🔧 FIX: Chỉ trigger Game Over nếu KHÔNG phải Attack Time mode
+                if (!m_isAttackTimeMode)
+                {
+                    OnBoardFullEvent?.Invoke();
+                }
             }
 
             IsBusy = false;

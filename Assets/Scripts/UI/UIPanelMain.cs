@@ -69,22 +69,17 @@ public class UIPanelMain : MonoBehaviour, IMenu
 
     private void OnClickAttackTime()
     {
-        Debug.Log("⏱️ ATTACK TIME Button Clicked! Starting Attack Time mode...");
         m_mngr.LoadLevelAttackTime();
     }
 
     private void OnClickAutoWin()
     {
-        Debug.Log("🤖 AUTO WIN Button Clicked! Starting game with auto play...");
-
         // Gọi UIMainManager để xử lý (vì UIPanelMain sẽ bị inactive sau khi chuyển scene)
         m_mngr.LoadLevelDualBoardWithAutoWin();
     }
 
     private void OnClickAutoLose()
     {
-        Debug.Log("💀 AUTO LOSE Button Clicked! Starting game with auto lose...");
-
         // Gọi UIMainManager để xử lý
         m_mngr.LoadLevelDualBoardWithAutoLose();
     }
