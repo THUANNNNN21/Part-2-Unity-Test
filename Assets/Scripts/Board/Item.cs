@@ -107,9 +107,6 @@ public class Item
             {
                 // Trigger "Explode" animation
                 animator.SetTrigger("Explode");
-
-                Debug.Log($"💥 Triggered Explode animation for {View.name}");
-
                 // Đợi animation play xong (giả sử animation dài ~0.3s)
                 View.DOScale(0.1f, 0.5f).OnComplete(
                     () =>
@@ -143,7 +140,6 @@ public class Item
         if (particle != null)
         {
             particle.Play();
-            Debug.Log($"✨ Playing particle effect for {View.name}");
         }
     }
 
